@@ -19,4 +19,5 @@ private:
     std::string readInput();
     void        processInput(const std::string& input);
     void        printPrompt() const;
+    std::string suggestCommand(const std::string& input);
 };

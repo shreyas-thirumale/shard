@@ -3,9 +3,12 @@
 #include "../lexer/Lexer.h"
 #include "../parser/Parser.h"
 #include "../executor/Executor.h"
+#include "../utils/StringUtils.h"
 
+#include <climits>
 #include <iostream>
 #include <string>
+#include <vector>
 
 Shell::Shell()
     : m_running(false)
@@ -53,8 +56,10 @@ void Shell::processInput(const std::string& input) {
         Parser parser(std::move(tokens));
         ast = parser.parse();
     } catch (const ParseError& e) {
+        std::string first = input.substr(0, input.find(' '));
+        std::string output = suggestCommand(first);
         std::cout << "  Unknown command: '" << input << "'\n";
-        std::cout << "  " << e.message << "\n\n";
+        if (output.length() > 0) std::cout << "  Did you mean '" << output << "'?\n";
         return;
     }
 
@@ -93,4 +98,21 @@ void Shell::printPrompt() const {
     }
 
     std::cout << dirname << " » " << std::flush;
+}
+
+std::string Shell::suggestCommand(const std::string& input) {
+    std::vector<std::string> commands= {
+        "list", "copy", "move", "go", "delete", "create", "rename", "help", "exit"
+    };
+    int best = INT_MAX;
+    std::string bestMatch = "";
+    for (const std::string& cand : commands) {
+        int temp = StringUtils::editDistance(input, cand);
+        if (temp < best) {
+            best = temp;
+            bestMatch = cand;   
+        }
+    }
+    if (best <= 2) return bestMatch;
+    return "";
 }
