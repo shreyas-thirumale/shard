@@ -181,11 +181,29 @@ CommandResult Executor::execute(const ASTNode* node) {
     if (dynamic_cast<const HelpNode*>(node)) {
         // Stub — help system will be implemented in Milestone 4
         return CommandResult::ok(
-            "Shard Help (coming soon)\n"
-            "  Navigation:  go to <dir>  |  list files  |  show current directory\n"
-            "  Files:       copy <src> to <dest>  |  move  |  delete  |  rename  |  create file\n"
-            "  Directories: create folder <name>  |  delete folder  |  rename folder\n"
-            "  Meta:        help  |  exit\n"
+            "Shard Help\n"
+            "\n"
+            "  Navigation:\n"
+            "    go to <directory>          Change current directory\n"
+            "    go back                    Go up one directory\n"
+            "    list files                 List files in current directory\n"
+            "    show current directory     Print current directory path\n"
+            "\n"
+            "  File Operations:\n"
+            "    copy <file> to <dest>      Copy a file to a destination\n"
+            "    move <file> to <dest>      Move a file to a destination\n"
+            "    delete file <filename>     Delete a file\n"
+            "    rename <file> to <name>    Rename a file\n"
+            "    create file <filename>     Create a new empty file\n"
+            "\n"
+            "  Directory Operations:\n"
+            "    create folder <name>       Create a new directory\n"
+            "    delete folder <name>       Delete a directory\n"
+            "    rename folder <name> to <newname>  Rename a directory\n"
+            "\n"
+            "  Meta:\n"
+            "    help                       Show this help menu\n"
+            "    exit                       Quit Shard\n"
         );
     }
 
