@@ -48,7 +48,7 @@ std::string Parser::expectIdentifier() {
     if (current().type == TokenType::KEYWORD) {
         return consume().value;
     }
-    throw ParseError("Expected a file or directory name", current().position);
+    throw ParseError("Expected a file or directory name", current().position, true);
 }
 
 // ── Top-level dispatch ────────────────────────────────────────────────────────
@@ -56,8 +56,9 @@ std::string Parser::expectIdentifier() {
 ASTNodePtr Parser::parseCommand() {
     if (current().type != TokenType::KEYWORD) {
         throw ParseError(
-            "Unknown command: '" + current().value + "'",
-            current().position
+            "Unknown command: '" + current().value + "'. Type 'help' to see available commands.",
+            current().position,
+            false
         );
     }
 
@@ -108,7 +109,11 @@ ASTNodePtr Parser::parseCommand() {
     if (kw == "help") return parseHelp();
     if (kw == "exit" || kw == "quit") return parseExit();
 
-    throw ParseError("Unknown command: '" + kw + "'", current().position);
+    throw ParseError(
+            "Unknown command: '" + kw + "'. Type 'help' to see available commands.",
+            current().position,
+            false
+        );
 }
 
 // ── Navigation ────────────────────────────────────────────────────────────────
@@ -199,7 +204,11 @@ ASTNodePtr Parser::parseCopyFile() {
         (current().value == "to" || current().value == "into")) {
         consume();
     } else {
-        throw ParseError("Expected 'to' or 'into' after source file", current().position);
+        throw ParseError(
+            "Expected 'to' or 'into' after source file — usage: copy <file> to <destination>",
+            current().position,
+            true
+        );
     }
 
     std::string dest = expectIdentifier();
@@ -220,7 +229,11 @@ ASTNodePtr Parser::parseMoveFile() {
         (current().value == "to" || current().value == "into")) {
         consume();
     } else {
-        throw ParseError("Expected 'to' or 'into' after source file", current().position);
+        throw ParseError(
+            "Expected 'to' or 'into' after source file — usage: move <file> to <destination>",
+            current().position,
+            true
+        );
     }
 
     std::string dest = expectIdentifier();
@@ -254,7 +267,11 @@ ASTNodePtr Parser::parseRenameFile() {
         (current().value == "to" || current().value == "as")) {
         consume();
     } else {
-        throw ParseError("Expected 'to' or 'as' after source name", current().position);
+        throw ParseError(
+            "Expected 'to' or 'as' after source name — usage: rename <file> to <newname>",
+            current().position,
+            true
+        );
     }
 
     std::string name = expectIdentifier();
@@ -308,7 +325,11 @@ ASTNodePtr Parser::parseRenameDirectory() {
         (current().value == "to" || current().value == "as")) {
         consume();
     } else {
-        throw ParseError("Expected 'to' or 'as' after directory name", current().position);
+        throw ParseError(
+            "Expected 'to' or 'as' after directory name — usage: rename folder <name> to <newname>",
+            current().position,
+            true
+        );
     }
 
     std::string name = expectIdentifier();
