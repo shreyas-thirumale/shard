@@ -56,10 +56,21 @@ void Shell::processInput(const std::string& input) {
         Parser parser(std::move(tokens));
         ast = parser.parse();
     } catch (const ParseError& e) {
-        std::string first = input.substr(0, input.find(' '));
-        std::string output = suggestCommand(first);
-        std::cout << "  Unknown command: '" << input << "'\n";
-        if (output.length() > 0) std::cout << "  Did you mean '" << output << "'?\n";
+        if (e.commandRecognized) {
+            // Verb was valid, arguments were wrong — show the specific error
+            std::cout << "  Invalid usage: " << e.message << "\n";
+        } else {
+            // Verb itself was unrecognized — show fuzzy suggestion
+            std::string first = input.substr(0, input.find(' '));
+            std::string suggestion = suggestCommand(first);
+            std::cout << "  Unknown command: '" << input << "'\n";
+            if (!suggestion.empty()) {
+                std::cout << "  Did you mean '" << suggestion << "'?\n";
+            } else {
+                std::cout << "  Type 'help' to see available commands.\n";
+            }
+        }
+        std::cout << "\n";
         return;
     }
 
