@@ -10,9 +10,11 @@
 struct ParseError {
     std::string message;
     std::size_t position;
+    bool        commandRecognized; // true = verb was valid, args were wrong
+                                   // false = verb itself was unknown
 
-    ParseError(std::string msg, std::size_t pos)
-        : message(std::move(msg)), position(pos) {}
+    ParseError(std::string msg, std::size_t pos, bool recognized = false)
+        : message(std::move(msg)), position(pos), commandRecognized(recognized) {}
 };
 
 // Parser consumes a token list and produces an AST node.
